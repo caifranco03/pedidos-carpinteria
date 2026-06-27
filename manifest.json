@@ -1,0 +1,14 @@
+{
+  "name": "Pedido de Cortes — Carpintería",
+  "short_name": "Pedido Cortes",
+  "description": "Formulario de pedido de cortes para carpintería",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FDF6EC",
+  "theme_color": "#7B4A1E",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
