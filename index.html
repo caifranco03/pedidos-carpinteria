@@ -10,105 +10,11 @@
   <link rel="manifest" href="manifest.json">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
 // ── GENERACIÓN DE EXCEL PARA LA MÁQUINA ──
-function cantosACodigo(cantos) {
-  var largos = (cantos.izq ? 1 : 0) + (cantos.der ? 1 : 0);
-  var cortos = (cantos.sup ? 1 : 0) + (cantos.inf ? 1 : 0);
-  if (largos === 0 && cortos === 0) return '';
-  if (largos === 2 && cortos === 2) return '4F';
-  var p = '';
-  if (largos === 1) p += '1L';
-  if (largos === 2) p += '2L';
-  if (cortos === 1) p += '1C';
-  if (cortos === 2) p += '2C';
-  return p;
-}
-
-function matAMarcaColor(mat) {
-  var m = {
-    'MDF 3mm':       ['MDF','3mm'],   'MDF 6mm':  ['MDF','6mm'],
-    'MDF 9mm':       ['MDF','9mm'],   'MDF 15mm': ['MDF','15mm'],
-    'MDF 18mm':      ['MDF','18mm'],  'MDF 25mm': ['MDF','25mm'],
-    'Melamina 18mm': ['FAPLAC','18mm'], 'Melamina 25mm': ['FAPLAC','25mm'],
-    'Terciado 4mm':  ['TERCIADO','4mm'], 'Terciado 9mm': ['TERCIADO','9mm'],
-    'Terciado 18mm': ['TERCIADO','18mm'], 'OSB 15mm': ['OSB','15mm']
-  };
-  return m[mat] || ['FAPLAC', mat];
-}
-
-function generarExcelBase64() {
-  try {
-    if (!window.XLSX) { console.warn('SheetJS no disponible'); return ''; }
-    var wb = _buildWorkbook();
-    if (!wb) { console.warn('Workbook vacío'); return ''; }
-    var wbout = XLSX.write(wb, {bookType:'xlsx', type:'base64'});
-    console.log('Excel generado, base64 length:', wbout.length);
-    return wbout;
-  } catch(e) {
-    console.error('Error generando Excel:', e);
-    return '';
-  }
-}
-
-function _buildWorkbookWith(cliente, fechaSol, fechaEnt) {
-  if (!window.XLSX) { console.warn('XLSX not loaded in _buildWorkbookWith'); return null; }
-
-  // Encabezados
-  var rows = [
-    ['MATHER-PLAC', '', '', '', '', '', '', '', ''],
-    ['AYACUCHO 3239 LANUS ESTE', '', '', '', '', '', '', '', ''],
-    ['SOLICITUD DE SERVICIO INTERNO', '', '', '', '', '', '', '', ''],
-    ['CLIENTE: ' + cliente, '', '', '', '', 'FECHA SOLICITUD: ' + fechaSol, '', '', ''],
-    ['', '', '', '', '', 'FECHA ENTREGA: ' + fechaEnt, '', '', ''],
-    ['ORDEN', 'Filos / Código', 'LARGO', 'ANCHO', 'Cantidad', 'VETA', 'No llenar Codigo  Maquina', 'MATERIAL', 'COLOR']
-  ];
-
-  // Filas de piezas
-  piezas.forEach(function(p, i) {
-    var mc = matAMarcaColor(p.mat);
-    var veta = p.mat.toLowerCase().indexOf('madera') >= 0 ? 1 : 0;
-    rows.push([
-      i + 1,
-      cantosACodigo(p.cantos),
-      Math.round(p.alto * 10),   // cm → mm (alto = LARGO en sentido veta)
-      Math.round(p.ancho * 10),  // cm → mm
-      p.cant,
-      veta,
-      '',
-      mc[0],
-      mc[1]
-    ]);
-  });
-
-  // Crear workbook
-  var wb = XLSX.utils.book_new();
-  var ws = XLSX.utils.aoa_to_sheet(rows);
-
-  // Anchos de columna
-  ws['!cols'] = [
-    {wch:7},{wch:15},{wch:10},{wch:10},{wch:10},{wch:8},{wch:24},{wch:14},{wch:14}
-  ];
-
-  // Merge celdas del encabezado
-  ws['!merges'] = [
-    {s:{r:0,c:0}, e:{r:0,c:8}},
-    {s:{r:1,c:0}, e:{r:1,c:8}},
-    {s:{r:2,c:0}, e:{r:2,c:8}},
-    {s:{r:3,c:0}, e:{r:3,c:4}},
-    {s:{r:3,c:5}, e:{r:3,c:8}},
-    {s:{r:4,c:5}, e:{r:4,c:8}},
-  ];
-
-  XLSX.utils.book_append_sheet(wb, ws, 'Hoja1');
-
-  // Nombre del archivo con fecha
-  var hoy = new Date();
-  var dd = String(hoy.getDate()).padStart(2,'0');
-  var mm = String(hoy.getMonth()+1).padStart(2,'0');
-  var yyyy = hoy.getFullYear();
-  var fname = 'Pedido_' + cliente.replace(/\s+/g,'_') + '_' + dd + mm + yyyy + '.xlsx';
-
-  XLSX.writeFile(wb, fname);
-  return fname;
+function _buildWorkbook() {
+  var cliente = document.getElementById('cli-nombre') ? document.getElementById('cli-nombre').value || 'Cliente' : 'Cliente';
+  var fechaSol = fechaHoy ? fechaHoy() : '';
+  var fechaEnt = turno ? formatFecha(turno.fecha) : '';
+  return _buildWorkbookWith(cliente, fechaSol, fechaEnt);
 }
 
 </script>
