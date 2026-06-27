@@ -24,7 +24,7 @@ exports.handler = async function(event) {
 
     const emailData = {
       from: 'onboarding@resend.dev',
-      to: ['davidkoz@live.com.ar'],
+      to: ['caifranco03@gmail.com'],
       subject: `Nuevo pedido de corte — ${nombre_cliente}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
