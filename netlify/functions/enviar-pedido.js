@@ -19,8 +19,11 @@ exports.handler = async function(event) {
       total_piezas, fecha_pedido, excel_base64, excel_filename
     } = body;
 
+    console.log('Iniciando envío para:', nombre_cliente);
+    console.log('RESEND_API_KEY presente:', !!process.env.RESEND_API_KEY);
+
     const emailPayload = JSON.stringify({
-      from: 'Pedidos Carpintería <onboarding@resend.dev>',
+      from: 'onboarding@resend.dev',
       to: ['davidkoz@live.com.ar'],
       subject: `Nuevo pedido de corte — ${nombre_cliente}`,
       html: `
@@ -53,6 +56,8 @@ exports.handler = async function(event) {
       }]
     });
 
+    console.log('Payload size:', emailPayload.length, 'bytes');
+
     const result = await new Promise((resolve, reject) => {
       const req = https.request({
         hostname: 'api.resend.com',
@@ -66,9 +71,16 @@ exports.handler = async function(event) {
       }, (res) => {
         let data = '';
         res.on('data', chunk => data += chunk);
-        res.on('end', () => resolve({ status: res.statusCode, body: JSON.parse(data) }));
+        res.on('end', () => {
+          console.log('Resend status:', res.statusCode);
+          console.log('Resend response:', data);
+          resolve({ status: res.statusCode, body: JSON.parse(data) });
+        });
       });
-      req.on('error', reject);
+      req.on('error', (e) => {
+        console.error('Request error:', e);
+        reject(e);
+      });
       req.write(emailPayload);
       req.end();
     });
@@ -82,6 +94,7 @@ exports.handler = async function(event) {
     };
 
   } catch (err) {
+    console.error('Handler error:', String(err));
     return {
       statusCode: 500,
       headers,
