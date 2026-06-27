@@ -20,9 +20,9 @@ exports.handler = async function(event) {
     } = body;
 
     console.log('Iniciando envío para:', nombre_cliente);
-    console.log('RESEND_API_KEY presente:', !!process.env.RESEND_API_KEY);
+    console.log('Excel base64 length:', excel_base64 ? excel_base64.length : 0);
 
-    const emailPayload = JSON.stringify({
+    const emailData = {
       from: 'onboarding@resend.dev',
       to: ['davidkoz@live.com.ar'],
       subject: `Nuevo pedido de corte — ${nombre_cliente}`,
@@ -45,18 +45,26 @@ exports.handler = async function(event) {
               <pre style="font-size:13px;color:#444;white-space:pre-wrap;margin:0">${resumen_piezas}</pre>
             </div>
             <div style="background:#7B4A1E;color:white;border-radius:8px;padding:14px;text-align:center">
-              <strong>El archivo Excel para la máquina está adjunto a este email.</strong>
+              <strong>${excel_base64 ? 'El archivo Excel para la máquina está adjunto.' : 'Ver detalle de piezas arriba.'}</strong>
             </div>
           </div>
         </div>
-      `,
-      attachments: [{
+      `
+    };
+
+    // Solo agregar adjunto si el Excel tiene contenido real
+    if (excel_base64 && excel_base64.length > 100) {
+      emailData.attachments = [{
         filename: excel_filename || 'pedido.xlsx',
         content: excel_base64
-      }]
-    });
+      }];
+      console.log('Adjunto Excel incluido, tamaño:', excel_base64.length);
+    } else {
+      console.log('Sin adjunto Excel — base64 vacío o muy chico');
+    }
 
-    console.log('Payload size:', emailPayload.length, 'bytes');
+    const emailPayload = JSON.stringify(emailData);
+    console.log('Payload total:', emailPayload.length, 'bytes');
 
     const result = await new Promise((resolve, reject) => {
       const req = https.request({
@@ -77,10 +85,7 @@ exports.handler = async function(event) {
           resolve({ status: res.statusCode, body: JSON.parse(data) });
         });
       });
-      req.on('error', (e) => {
-        console.error('Request error:', e);
-        reject(e);
-      });
+      req.on('error', (e) => { console.error('Request error:', e); reject(e); });
       req.write(emailPayload);
       req.end();
     });
