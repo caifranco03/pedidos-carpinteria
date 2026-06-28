@@ -6,19 +6,10 @@
   <meta name="theme-color" content="#7B4A1E">
   <meta name="color-scheme" content="light">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Pedido de Corte">
+  <meta name="apple-mobile-web-app-title" content="Matherplac">
   <link rel="manifest" href="manifest.json">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
-// ── GENERACIÓN DE EXCEL PARA LA MÁQUINA ──
-function _buildWorkbook() {
-  var cliente = document.getElementById('cli-nombre') ? document.getElementById('cli-nombre').value || 'Cliente' : 'Cliente';
-  var fechaSol = fechaHoy ? fechaHoy() : '';
-  var fechaEnt = turno ? formatFecha(turno.fecha) : '';
-  return _buildWorkbookWith(cliente, fechaSol, fechaEnt);
-}
-
-</script>
-  <title>Pedido de Cortes — Carpintería</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <title>Matherplac Cortes — Pedido Online</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     :root{--cafe-osc:#5C3210;--cafe:#7B4A1E;--cobre:#B5651D;--bronce:#CD853F;--arena:#F5E6D0;--crema:#FDF6EC;--borde:#E2C99A;--texto:#2C1A0E;--gris:#8B7355}
@@ -117,7 +108,7 @@ function _buildWorkbook() {
 
 <header>
   <div class="hi">🪵</div>
-  <div class="ht"><h1>Pedido de Cortes</h1><p>Carpintería · Cortes a medida</p></div>
+  <div class="ht"><h1>Matherplac Cortes</h1><p>Pedido de cortes a medida</p></div>
   <div class="hb">✦ A medida</div>
 </header>
 
@@ -208,31 +199,21 @@ function _buildWorkbook() {
 
   <!-- PASO 5 -->
   <div class="sec" id="sec5">
-    <div class="banner"><div class="bi">💳</div><div><h2>Anticipo del pedido</h2><p>Elegí cómo abonar el 20%</p></div></div>
-    <div class="pr-box" id="pr-box"></div>
-    <div class="avp">⚠️ <span>El pedido se procesa una vez confirmado el anticipo. Elegí tu método de pago:</span></div>
-    <div class="mc" id="mc-transf"><div class="mi">🏦</div><div class="mn"><h3>Transferencia bancaria</h3><p>Alias — acreditación inmediata</p></div><div class="ma">›</div></div>
-    <div class="mc" id="mc-efect"><div class="mi">💵</div><div class="mn"><h3>Efectivo en sucursal</h3><p>Acercate a abonar en persona</p></div><div class="ma">›</div></div>
-    <div id="panel-transf" style="display:none;margin-top:4px">
-      <div class="alias-box">
-        <div class="al-lbl">Alias de transferencia</div>
-        <div class="al-val">STYVENTAS.FRANCO</div>
-        <div class="al-mnt" id="alias-monto"></div>
-        <button class="btn-cop" id="btn-cop">📋 Copiar alias</button>
-      </div>
-      <button class="btn-tr" id="btn-conf-transf">✅ Ya realicé la transferencia</button>
-      <button class="btn btn-s" id="btn-cerrar-transf" style="margin-top:8px">← Otras opciones</button>
+    <div class="banner"><div class="bi">✅</div><div><h2>¡Pedido enviado!</h2><p>Ya estamos procesando tu solicitud</p></div></div>
+
+    <div style="background:white;border-radius:16px;border:1.5px solid var(--borde);padding:24px;text-align:center;margin-bottom:16px;box-shadow:0 2px 8px rgba(91,50,16,.08)">
+      <div style="font-size:52px;margin-bottom:12px">🪵</div>
+      <div style="font-size:19px;font-weight:800;color:var(--cafe-osc);margin-bottom:8px">Tu pedido fue recibido</div>
+      <div style="font-size:15px;color:var(--gris);line-height:1.6">El carpintero va a revisar tu pedido<br>y te confirmará el monto por WhatsApp.</div>
     </div>
-    <div id="panel-efect" style="display:none;margin-top:4px">
-      <div class="ef-box">
-        <span class="ef-ic">🏪</span>
-        <p>Acercate a nuestra sucursal para abonar el anticipo en efectivo.</p>
-        <strong id="efect-monto"></strong>
-      </div>
-      <button class="btn-ef" id="btn-conf-efect">✅ Voy a acercarme a abonar</button>
-      <button class="btn btn-s" id="btn-cerrar-efect" style="margin-top:8px">← Otras opciones</button>
+
+    <div style="background:var(--arena);border:2px solid var(--cobre);border-radius:14px;padding:18px;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:700;color:var(--cafe-osc);margin-bottom:6px">⚠️ El pedido se procesa una vez confirmado el anticipo</div>
+      <div style="font-size:14px;color:var(--gris);line-height:1.5">Tocá el botón de abajo para avisarle al carpintero que tu pedido ya fue enviado y quedar a la espera de la cotización.</div>
     </div>
-    <button class="btn btn-s" id="btn-b5" style="margin-top:14px">← Volver al resumen</button>
+
+    <button class="btn btn-wa" id="btn-wa-final">📲 Avisar por WhatsApp</button>
+
     <div class="ptog" id="ptog"><span>⚙️ Configurar precios por material</span><span class="ar">▼</span></div>
     <div class="ppan" id="ppan">
       <p style="font-size:13px;color:var(--gris);margin-bottom:14px">Precio por cm² de cada material. Solo lo ves vos.</p>
@@ -390,7 +371,6 @@ function generarResumen(){
 }
 
 // PAGO
-function ocultarPaneles(){document.getElementById('panel-transf').style.display='none';document.getElementById('panel-efect').style.display='none';}
 function mostrarPago(){
   var total=calcTotal(), ant=Math.round(total*0.20);
   var box=document.getElementById('pr-box');
@@ -450,15 +430,14 @@ async function confirmarYAvanzar(){
         resumen_piezas: resumenPiezas,
         total_piezas:   piezas.reduce(function(a,p){return a+p.cant;},0),
         fecha_pedido:   fechaHoy(),
-        excel_base64:   xlsxB64,
+        piezas:         piezas,
         excel_filename: fname
       })
     });
     var data=await resp.json();
     if(!data.ok) throw new Error(data.error||'Error desconocido');
-    document.getElementById('excel-aviso').style.display='block';
     btn.textContent='✅ Pedido enviado';
-    setTimeout(function(){irPaso(5);},800);
+    setTimeout(function(){irPaso(5);},600);
   }catch(e){
     console.error('Envío error:',e);
     btn.textContent='📲 Confirmar y continuar al pago →';
@@ -477,21 +456,11 @@ document.getElementById('btn-b3').addEventListener('click',function(){irPaso(2);
 document.getElementById('btn-confirmar').addEventListener('click',confirmarYAvanzar);
 document.getElementById('btn-b4').addEventListener('click',function(){irPaso(3);});
 document.getElementById('btn-b5').addEventListener('click',function(){irPaso(4);});
-document.getElementById('mc-transf').addEventListener('click',function(){ocultarPaneles();document.getElementById('panel-transf').style.display='block';});
-document.getElementById('mc-efect').addEventListener('click',function(){ocultarPaneles();document.getElementById('panel-efect').style.display='block';});
-document.getElementById('btn-cerrar-transf').addEventListener('click',ocultarPaneles);
-document.getElementById('btn-cerrar-efect').addEventListener('click',ocultarPaneles);
-document.getElementById('btn-cop').addEventListener('click',function(){navigator.clipboard.writeText('STYVENTAS.FRANCO').then(function(){alert('✅ Alias copiado');}).catch(function(){prompt('Copiá el alias:','STYVENTAS.FRANCO');});});
-document.getElementById('btn-conf-transf').addEventListener('click',function(){
-  var nombre=document.getElementById('cli-nombre').value||'Cliente';
-  var total=calcTotal(), ant=total>0?Math.round(total*.2):0;
-  var msg='💰 *Confirmación de pago*\n👤 '+nombre+'\n'+(total>0?'💵 Anticipo: $'+fmt(ant)+'\n':'')+'📲 Pago por transferencia al alias STYVENTAS.FRANCO';
-  window.open('https://wa.me/'+TEL+'?text='+encodeURIComponent(msg),'_blank');
-});
-document.getElementById('btn-conf-efect').addEventListener('click',function(){
-  var nombre=document.getElementById('cli-nombre').value||'Cliente';
-  var total=calcTotal(), ant=total>0?Math.round(total*.2):0;
-  var msg='💵 *Aviso pago en efectivo*\n👤 '+nombre+'\n'+(total>0?'💵 Anticipo: $'+fmt(ant)+'\n':'')+'🏪 Me acerco a abonar en sucursal';
+// Botón WhatsApp final
+document.getElementById('btn-wa-final').addEventListener('click', function(){
+  var nombre = document.getElementById('cli-nombre').value || 'Cliente';
+  var msg = '¡Hola! Soy ' + nombre + ' y acabo de hacer mi pedido de cortes online en Matherplac. '
+    + 'Quedo esperando la cotización y confirmación del anticipo para procesar el pedido. ¡Gracias!';
   window.open('https://wa.me/'+TEL+'?text='+encodeURIComponent(msg),'_blank');
 });
 document.getElementById('ptog').addEventListener('click',function(){
@@ -538,6 +507,13 @@ function matAMarcaColor(mat) {
     'Terciado 18mm': ['TERCIADO','18mm'], 'OSB 15mm': ['OSB','15mm']
   };
   return m[mat] || ['FAPLAC', mat];
+}
+
+function _buildWorkbook() {
+  var cliente = document.getElementById('cli-nombre') ? (document.getElementById('cli-nombre').value || 'Cliente') : 'Cliente';
+  var fechaSol = typeof fechaHoy === 'function' ? fechaHoy() : '';
+  var fechaEnt = turno ? formatFecha(turno.fecha) : '';
+  return _buildWorkbookWith(cliente, fechaSol, fechaEnt);
 }
 
 function generarExcelBase64() {
