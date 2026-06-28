@@ -248,7 +248,7 @@ exports.handler = async function(event) {
 
     const emailData = {
       from: 'onboarding@resend.dev',
-      to: ['caifranco03@gmail.com'],
+      to: ['davidkozakiewicz008@gmail.com'],
       subject: `Nuevo pedido de corte — ${b.nombre_cliente}`,
       html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:linear-gradient(135deg,#5C3210,#B5651D);padding:20px;border-radius:12px 12px 0 0"><h1 style="color:white;margin:0">🪵 Nuevo Pedido de Corte</h1></div><div style="background:#FDF6EC;padding:20px;border:1px solid #E2C99A;border-top:none"><table style="width:100%;border-collapse:collapse;margin-bottom:20px"><tr><td style="padding:8px;font-weight:bold;color:#5C3210">Cliente</td><td>${b.nombre_cliente}</td></tr><tr style="background:#F5E6D0"><td style="padding:8px;font-weight:bold;color:#5C3210">Teléfono</td><td>${b.tel_cliente}</td></tr><tr><td style="padding:8px;font-weight:bold;color:#5C3210">Trabajo</td><td>${b.descripcion||'—'}</td></tr><tr style="background:#F5E6D0"><td style="padding:8px;font-weight:bold;color:#5C3210">Turno</td><td>${b.turno_fecha} a las ${b.turno_hora} hs</td></tr><tr><td style="padding:8px;font-weight:bold;color:#5C3210">Total piezas</td><td><strong>${b.total_piezas} unidades</strong></td></tr></table><div style="background:white;border:1px solid #E2C99A;border-radius:8px;padding:16px;margin-bottom:16px"><h3 style="color:#5C3210;margin:0 0 12px 0">📐 Detalle</h3><pre style="font-size:13px;color:#444;white-space:pre-wrap;margin:0">${b.resumen_piezas}</pre></div><div style="background:#7B4A1E;color:white;border-radius:8px;padding:14px;text-align:center"><strong>El Excel para la máquina está adjunto.</strong></div></div></div>`
     };
