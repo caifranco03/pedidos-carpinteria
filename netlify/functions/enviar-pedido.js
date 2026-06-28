@@ -185,8 +185,8 @@ function genSheet(piezas, cliente, fechaSol, fechaEnt) {
     rows.push(`<row r="${r}" ht="${rowH}" customHeight="1">
       ${cell(`B${r}`, i+1, 11)}
       ${cell(`C${r}`, cod, 11)}
-      ${cell(`D${r}`, Math.round(p.alto*10), 11)}
-      ${cell(`E${r}`, Math.round(p.ancho*10), 11)}
+      ${cell(`D${r}`, Math.round(p.alto), 11)}
+      ${cell(`E${r}`, Math.round(p.ancho), 11)}
       ${cell(`F${r}`, p.cant, 11)}
       ${cell(`G${r}`, veta, 11)}
       ${cell(`H${r}`, null, 11)}
