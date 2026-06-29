@@ -116,11 +116,10 @@ function cell(ref, val, s) {
 
 function genSheet(piezas, cliente, fechaSol, fechaEnt) {
   const matMap = {
-    'MDF 3mm':['MDF','3mm'],'MDF 6mm':['MDF','6mm'],'MDF 9mm':['MDF','9mm'],
-    'MDF 15mm':['MDF','15mm'],'MDF 18mm':['MDF','18mm'],'MDF 25mm':['MDF','25mm'],
-    'Melamina 18mm':['FAPLAC','18mm'],'Melamina 25mm':['FAPLAC','25mm'],
-    'Terciado 4mm':['TERCIADO','4mm'],'Terciado 9mm':['TERCIADO','9mm'],
-    'Terciado 18mm':['TERCIADO','18mm'],'OSB 15mm':['OSB','15mm']
+    'Egger Liso':  ['EGGER','LISO'],
+    'Egger Veta':  ['EGGER','VETA'],
+    'Faplac Liso': ['FAPLAC','LISO'],
+    'Faplac Veta': ['FAPLAC','VETA']
   };
   function cantos(c) {
     const l=(c.izq?1:0)+(c.der?1:0), k=(c.sup?1:0)+(c.inf?1:0);
