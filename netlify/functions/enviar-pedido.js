@@ -180,12 +180,12 @@ function genSheet(piezas, cliente, fechaSol, fechaEnt) {
     const r = 14 + i;
     const mc = matMap[p.mat] || ['FAPLAC', p.mat];
     const veta = p.mat.toLowerCase().includes('madera') ? 1 : null;
-    const cod = cantos(p.cantos || {});
+    const cod = p.canto || '';
     rows.push(`<row r="${r}" ht="${rowH}" customHeight="1">
       ${cell(`B${r}`, i+1, 11)}
       ${cell(`C${r}`, cod, 11)}
-      ${cell(`D${r}`, Math.round(p.alto), 11)}
-      ${cell(`E${r}`, Math.round(p.ancho), 11)}
+      ${cell(`D${r}`, Math.round(p.ancho), 11)}
+      ${cell(`E${r}`, Math.round(p.alto), 11)}
       ${cell(`F${r}`, p.cant, 11)}
       ${cell(`G${r}`, veta, 11)}
       ${cell(`H${r}`, null, 11)}
