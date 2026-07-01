@@ -114,7 +114,8 @@ function cell(ref, val, s) {
   return `<c r="${ref}" t="inlineStr" s="${s}"><is><t>${esc(val)}</t></is></c>`;
 }
 
-function genSheet(piezas, cliente, fechaSol, fechaEnt) {
+function genSheet(piezas, cliente, fechaSol, fechaEnt, obs) {
+  obs = obs || '';
   const matMap = {
     'Egger Liso':  ['EGGER','LISO'],
     'Egger Veta':  ['EGGER','VETA'],
@@ -160,8 +161,12 @@ function genSheet(piezas, cliente, fechaSol, fechaEnt) {
   rows.push(`<row r="10" ht="${rowH}" customHeight="1">${cell('B10',' CLIENTE',4)}${cell('H10',' FECHA SOLICITUD',4)}${cell('I10',fechaSol,4)}</row>`);
   // Row 11: valor cliente / FECHA ENTREGA
   rows.push(`<row r="11" ht="${rowH}" customHeight="1">${cell('B11',cliente,4)}${cell('H11',' FECHA ENTREGA',4)}${cell('I11',fechaEnt,4)}</row>`);
-  // Row 12: vacío
-  rows.push(`<row r="12" ht="${rowH}" customHeight="1"/>`);
+  // Row 12: observaciones si las hay
+  if(obs) {
+    rows.push(`<row r="12" ht="${rowH}" customHeight="1">${cell('B12',' OBS: '+obs,4)}</row>`);
+  } else {
+    rows.push(`<row r="12" ht="${rowH}" customHeight="1"/>`);
+  }
   // Row 13: headers — s indices: ORDEN=3,FilosCod=3,LARGO=5,ANCHO=6,Cant(medium)=8,VETA=7,NoLlenar=8,MATERIAL=9,COLOR=10
   rows.push(`<row r="13" ht="${rowH}" customHeight="1">
     ${cell('B13','ORDEN',3)}
@@ -206,8 +211,9 @@ function genSheet(piezas, cliente, fechaSol, fechaEnt) {
 </worksheet>`;
 }
 
-function generarXlsx(piezas, cliente, fechaSol, fechaEnt) {
-  const sheet = genSheet(piezas, cliente, fechaSol, fechaEnt);
+function generarXlsx(piezas, cliente, fechaSol, fechaEnt, obs) {
+  obs = obs || '';
+  const sheet = genSheet(piezas, cliente, fechaSol, fechaEnt, obs);
   const zip = buildZip({
     '[Content_Types].xml': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`,
     '_rels/.rels': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`,
@@ -233,7 +239,7 @@ exports.handler = async function(event) {
 
     let xlsxB64 = '';
     try {
-      xlsxB64 = generarXlsx(b.piezas||[], b.nombre_cliente||'Cliente', b.fecha_pedido||'', b.turno_fecha||'');
+      xlsxB64 = generarXlsx(b.piezas||[], b.nombre_cliente||'Cliente', b.fecha_pedido||'', b.turno_fecha||'', b.observaciones||'');
       console.log('Excel OK, length:', xlsxB64.length);
     } catch(e) {
       console.error('Excel error:', String(e));
